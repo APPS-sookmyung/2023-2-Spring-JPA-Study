@@ -19,3 +19,15 @@
 * **spring-boot-devtools** 라이브러리는 개발을 편하게 해주는 도구 
     * 자동으로 reloading해줌 
     * 변경사항이 있는 해당 파일에 Build>Recompile "파일명" 을 하고 refresh하면 자동으로 반영됨 (서버를 껐다 켰다 할 필요가 없음)
+
+## H2 데이터베이스 
+* 개발/테스트 용도로 가볍고 편리한 db. 웹 콘솔 환경 제공 
+* db 생성 후, `jdbc:h2:tcp://localhost/~/jpashop`로 h2 console 접속 
+* **cmd로 h2.bat을 실행해놓아야 db가 꺼지지 않음!! 꼭 실행하고 진행하자** 
+
+## 테스트코드 작성, 실행 동작 확인 
+* 스프링부트 현재 버전에서는 JUnit5를 사용하므로 @Runwith을 @Extendwith으로 바꾸어 사용해야한다. 참고글: https://jordy-torvalds.tistory.com/102 
+* 에러 해결 1: [Springboot] Execution failed for task ':test' 에러
+    * https://mynameisleeminee.tistory.com/56
+* 테스트 코드가 실행이 안될때 해결
+    * yml파일에서 띄어쓰기가 제대로 되어있는지 확인할 것 
