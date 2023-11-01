@@ -14,7 +14,7 @@ public class Member {
     @Id @GeneratedValue
     @Column(name="member_id") //컬럼명 지정 (안하면 그냥 id됨)
     private Long id;
-    private String username;
+    private String name;
 
     @Embedded //내장 타입을 포함하고 있음을 알 수 있음
     private Address address;
