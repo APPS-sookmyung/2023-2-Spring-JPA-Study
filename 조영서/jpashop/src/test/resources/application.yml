@@ -1,7 +1,7 @@
 spring:
   #h2 세팅
   datasource:
-    url: jdbc:h2:tcp://localhost/~/jpashop
+    url: jdbc:h2:mem:test
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -14,6 +14,8 @@ spring:
       hiberate:
         #show_sql: true #System.out에 출력
         format_sql: true
+
+  #위의 설정이 다 없어도 돌아간다
 
 logging.level:
     org.hibernate.SQL: debug #JPA나 Hibernate가 생성하는 SQL이 모두 보이는, logger를 통해

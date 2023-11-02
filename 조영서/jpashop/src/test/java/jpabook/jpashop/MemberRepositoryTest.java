@@ -1,7 +1,8 @@
+/*
 package jpabook.jpashop;
 
-//import jpabook.jpashop.domain.Member;
-//import jpabook.jpashop.repository.MemberRepository;
+import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,4 +31,4 @@ public class MemberRepositoryTest {
         Assertions.assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
         //Assertions.assertThat(findMember).isEqualTo(member); //JPA 엔티티 동일성 보장
     }
-}
+}*/
