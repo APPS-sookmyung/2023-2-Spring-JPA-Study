@@ -80,3 +80,34 @@
     }
 
     ```
+## 주문 서비스 개발 
+* 주문 저장할때 orderRepository.save만 하는 이유 
+    ```java
+        //주문 저장
+        orderRepository.save(order);
+    ```
+    * Order 엔티티에서 `CascadeType all` 옵션 때문
+        * OrderItem, Delivery가 자동적으로 repository에 persist 된다
+        * 어디까지 cascadetype all 을 하는게 좋을까?
+            * 라이프사이클에서 동일하게 관리할때 의미가 있는 것
+            * Order, Delivery, OrderItem 사이의 관계
+            * 다른 것이 참조할 수 없는 private owner일때만
+            * 설핏 잘못하면 cascade 옵션때문에 한번에 다 지워질 수 있으므로 주의 
+* `생성 로직`을 수정할 일이 생길때 아래와 같은 코드는 좋지 않음. 
+    ```java
+    OrderItem orderItem1=new OrderItem();
+    ```
+    * 따라서 OrderItem에 `protected`를 통해 위와 같은 코드를 작성하는 것을 막을 수 있음 -> 좋은 설계/유지 보수가 가능해진다 
+        ```java
+            protected OrderItem() {
+        }
+        ```
+        * 이 코드도 **lombok**으로 줄일 수 있음! 
+            ```java
+            @NoArgsConstructor(access=AccesSLevel.PROTECTED)
+            ```
+* JPA의 장점: JPA를 활용하면 엔티티의 데이터가 바뀌면 JPA가 알아서 바뀐 변경 포인트를 (`더티 체킹`/`변경 내역 감지`) 체크하여 데이터베이스의 UPDATE 쿼리들을 날려줌 
+* **`도메인 모델 패턴`**: 엔티티에 핵심 비즈니스 로직을 몰아넣는 스타일 
+    * 서비스 계층은 단순히 엔티티에 필요한 요청을 위임하는 역할을 함 
+    * 엔티티가 비즈니스 로직을 가지고 객체 지향의 특성을 적극 활용함 
+* **`트랜잭션 스크립트 패턴`**: 반대로 엔티티에는 비즈니스 로직이 거의 없고 서비스 계층에서 대부분의 비즈니스 로직을 처리하는 것 

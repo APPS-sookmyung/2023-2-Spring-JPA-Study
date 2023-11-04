@@ -1,7 +1,9 @@
 package com.jpabook.jpashop.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.util.List;
 @Entity
 @Table(name="orders") //테이블명이 관례대로 order가 될 수 있어서 지정함
 @Getter @Setter
+@NoArgsConstructor(access= AccessLevel.PROTECTED)
 public class Order {
     @Id @GeneratedValue
     @Column(name="order_id")
