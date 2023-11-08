@@ -111,3 +111,60 @@
     * 서비스 계층은 단순히 엔티티에 필요한 요청을 위임하는 역할을 함 
     * 엔티티가 비즈니스 로직을 가지고 객체 지향의 특성을 적극 활용함 
 * **`트랜잭션 스크립트 패턴`**: 반대로 엔티티에는 비즈니스 로직이 거의 없고 서비스 계층에서 대부분의 비즈니스 로직을 처리하는 것 
+
+## 주문 기능 테스트 
+* 에러 해결 : 상품 주문 테스트 코드 run 시 이런 에러가 발생했었다. 
+    ```
+    org.springframework.orm.jpa.JpaSystemException: ids for this class must be manually assigned before calling save(): com.jpabook.jpashop.domain.OrderItem
+    ```
+    * 해결: Order과 OrderItem의 id를 @GeneratedValue 어노테이션을 추가하지 않아서였다. (참고: https://clolee.tistory.com/145 )
+* 단위 테스트로 진행하는 것이 더 좋고 의미가 있음! 
+
+## 주문 검색 기능 개발
+JPA에서 동적 쿼리를 어떻게 해결해야 하는가? 
+1. JPQL로 처리(무식한 방법): 동적으로 그냥 생성하기 
+    ```java
+    String jpql ="select o from Order o join o.member m";
+        boolean isFirstCondition = true;
+
+        //주문 상태 검색
+        if (orderSearch.getOrderStatus()!=null){
+            if (isFirstCondition){
+                jpql+=" where";
+                isFirstCondition=false;
+            }else{
+                jpql+=" and";
+            }
+            jpql+=" o.status = :status";
+        }
+
+        //회원 이름 검색
+        if (StringUtils.hasText(orderSearch.getMemberName())){
+            if (isFirstCondition){
+                jpql+=" where";
+                isFirstCondition=false;
+            }else{
+                jpql+=" and";
+            }
+            jpql+=" m.name like :name";
+        }
+
+        TypedQuery<Order> query=em.createQuery(jpql,Order.class)
+                .setMaxResults(1000);
+
+        if (orderSearch.getOrderStatus() != null) {
+            query = query.setParameter("status", orderSearch.getOrderStatus());
+        }
+        if (StringUtils.hasText(orderSearch.getMemberName())) {
+            query = query.setParameter("name", orderSearch.getMemberName());
+        }
+        return query.getResultList();
+    ```
+    * 문자를 더해서 하는 것은 더욱 번거럽고 실수 발생 쉬움 
+2. JPA Criteria로 처리 
+    * jpa에서 표준으로 제공해주는 것, 그러나 이것도 권장하는 방법이 아님 
+    * 김영한 강사님이 괴로워하심(?)
+    * 치명적인 단점: 실무를 많이 안해본 사람이 만든 코드 같음 (너무 고민 많이 해보임..) -> 유지 보수가 하기 너무 어려움 
+        * 바로 쿼리가 떠오르기 어려운 코드.. 
+        * *난 안써요.. -김영한 강사님-* 
+3. 가장 좋은 방법: Querydsl 
