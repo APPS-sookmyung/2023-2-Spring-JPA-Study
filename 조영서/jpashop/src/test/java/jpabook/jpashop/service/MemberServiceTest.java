@@ -1,9 +1,8 @@
 package jpabook.jpashop.service;
 
-import io.micrometer.common.util.internal.logging.InternalLogLevel;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.repository.MemberRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +23,7 @@ public class MemberServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     //@Rollback(false) //insert문을 볼 수 있음, Transactional은 rollback을 하니까
     public void 회원가입() throws Exception{
         //given
@@ -46,11 +45,11 @@ public class MemberServiceTest {
         member2.setName("cho");
         //when
         memberService.join(member1);
-/*        try{ //exception을 잡아주어야 함
+      try{ //exception을 잡아주어야 함
             memberService.join(member2);
         } catch (IllegalStateException e){ //여기서 exception을 잡아 줌
             return;
-        }*/
+        }
         memberService.join(member2); //예외가 발생해야 한다
         //then
         fail("예외가 발생해야 한다.");
