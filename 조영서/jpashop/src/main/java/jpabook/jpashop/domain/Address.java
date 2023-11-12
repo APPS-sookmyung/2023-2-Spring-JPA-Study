@@ -12,12 +12,9 @@ public class Address {
     private String street;
     private String zipcode;
 
-<<<<<<< Updated upstream
-=======
     protected Address() {
     }
 
->>>>>>> Stashed changes
     public Address(String city, String street, String zipcode) {
         this.city = city;
         this.street = street;
