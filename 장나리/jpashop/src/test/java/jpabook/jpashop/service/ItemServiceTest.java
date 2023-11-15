@@ -29,7 +29,6 @@ public class ItemServiceTest {
         item.setStockQuantity(10);
         em.persist(item);
 
-
         //when
         Long saveId = itemService.saveItem(item);
         //then
