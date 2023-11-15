@@ -1,31 +1,46 @@
-# Week 5 과제: JPQL와 QueryDSL에 대해 
+# 5주차 과제 
+Section7 의 “회원 목록 조회”에서 화면에 Member 객체 그대로 조회할 수 있도록 하는데 이걸 DTO를 사용하여 “이름”과 “우편번호”만 화면에 출력 될 수 있도록 하기
 
-## JPQL
-* SQL을 추상화한 객체 지향 쿼리 언어
-* 특정 데이터베이스 SQL에 의존하지 않는 장점
-* SQL과 문법이 유사하며, SELECT, FROM, WHERE, GROUP BY, HAVING, JOIN을 지원
-* 단점
-    * JPQL은 기본 문자열로 작성되기 때문에 컴파일 시 에러를 발생하지 않는다.
-        * 문제가 있음에도 불구하고 정상적으로 작동하여 배포 시 문제가 발생할 수 있음
-    * 동적으로 쿼리 언어를 작성하는 데 효율적이지 못하다.
-        * 예) 특정 조건의 참일 경우엔 A SQL 쿼리를, 거짓일 경우엔 B 쿼리를 실행하는 등
-* JPQL과 SQL의 가장 뚜렷한 차이점은 JPQL은 엔티티 객체를 대상으로 쿼리문을 작성하며, SQL은 데이터베이스 테이블을 대상으로 쿼리문을 작성하는 것
-* 엔티티와 속성은 대소문자를 구분한다. (Member(엔티티), age(속성))
-* @Entity의 name을 지정하지 않으면, 클래스 이름이 엔티티 이름이다.
-* JPQL 키워드는 대소문자를 구분하지 않는다. (Select, FROM, where)
-* 테이블 이름이 아닌 엔티티 이름을 사용한다. (Member, Team)
-* 별칭(m) 사용은 필수적
-* as는 생략이 가능하다.
-* 출처: https://ittrue.tistory.com/270 [IT is True:티스토리]
+1. dto package를 만들어서 UserDto라는 class를 만들고 dto객체로 바꾸는 static 메소드를 작성했습니다 
+    ```java
+    package com.jpabook.jpashop.dto;
 
-## QueryDSL
-* 하이버네이트 쿼리 언어(HQL: Hibernate Query Language)의 쿼리를 타입에 안전하게 생성 및 관리해주는 프레임워크
-* 정적 타입을 이용하여 SQL과 같은 쿼리를 생성
-* 자바 코드로 SQL 문을 작성할 수 있어 컴파일 시에 오류를 발생하여 잘못된 쿼리가 실행되는 것을 방지
-* 장점
-    * 문자가 아닌 코드로 쿼리를 작성할 수 있어 컴파일 시점에 문법 오류를 확인할 수 있다.
-    * 인텔리제이와 같은 IDE의 자동 완성 기능의 도움을 받을 수 있다.
-    * 복잡한 쿼리나 동적 쿼리 작성이 편리하다.
-    * 쿼리 작성 시 제약 조건 등을 메서드 추출을 통해 재사용할 수 있다.
-    * JPQL 문법과 유사한 형태로 작성할 수 있어 쉽게 적응할 수 있다.
-* 출처: https://ittrue.tistory.com/292
+    import com.jpabook.jpashop.domain.Member;
+    import lombok.*;
+
+    import java.util.ArrayList;
+    import java.util.List;
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class UserDto {
+        private String name;
+        private String zipcode;
+
+        public static UserDto toUserDto(Member member){
+            UserDto userDto=new UserDto();
+            userDto.setName(member.getName());
+            userDto.setZipcode(member.getAddress().getZipcode());
+            return userDto;
+        }
+        public static List<UserDto> toUserDtoList(List<Member> members){
+            List userDtoList=new ArrayList<>();
+            for (Member m: members){
+                userDtoList.add(toUserDto(m));
+            }
+            return userDtoList;
+        }
+    }
+    ```
+2. MemberController에 @GetMapping("/members2")로 members 리스트를 UserDto형의 리스트로 보내도록 하였습니다. 
+    ```java
+        @GetMapping("/members2")
+        public String list2(Model model){
+            List<Member> members=memberService.findMembers();
+            List<UserDto> membersDto=UserDto.toUserDtoList(members);
+            model.addAttribute("members",membersDto);
+            return "members/memberList";
+        }
+    ```
