@@ -3,6 +3,7 @@ package jpabook.jpashop.controller;
 import jakarta.validation.Valid;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.dto.MemberDto;
 import jpabook.jpashop.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -44,6 +45,16 @@ public class MemberController {
     @GetMapping("/members")
     public String list(Model model){
         model.addAttribute("members", memberService.findMembers());
+        return "members/memberList";
+    }
+
+    //5주차 과제
+    @GetMapping("/membersDto")
+    public String listDto(Model model){
+        List<Member> members=memberService.findMembers();
+
+        List<MemberDto> membersDto=MemberDto.createMemberList(members);
+        model.addAttribute("members",membersDto);
         return "members/memberList";
     }
 }
