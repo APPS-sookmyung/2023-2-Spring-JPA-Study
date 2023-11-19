@@ -3,7 +3,9 @@ package jpabook.jpashop.controller;
 import jakarta.validation.Valid;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.dto.MemberDTO;
 import jpabook.jpashop.service.MemberService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -45,4 +48,20 @@ public class MemberController {
         model.addAttribute("members", members);
         return "members/memberList";
     }
+    /** 5주차 과제 **/
+    @GetMapping("/membersDTO")
+    public String list_DTO(Model model) {
+        List<Member> members = memberService.findMembers();
+
+        // 멤버를 MemberDTO로 변환
+        List<MemberDTO> memberDTOs = members.stream()
+                .map(MemberDTO::from)
+                .collect(Collectors.toList());
+
+        model.addAttribute("members", memberDTOs);
+        return "members/memberList";
+    }
+
+
+
 }
