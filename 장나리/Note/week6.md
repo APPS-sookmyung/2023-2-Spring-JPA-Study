@@ -57,10 +57,6 @@
 - 리포지토리에 접근하는 것은 단순한 조회의 경우에는 그냥 호출해도 됨
 - 서비스에 한번에 위임하도록 함
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/ffd544eb-a3b5-4d33-ada6-befe785ca880/4803df8e-511a-4756-b4b0-825ce37a25c1/Untitled.png)
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/ffd544eb-a3b5-4d33-ada6-befe785ca880/e23c807f-e7d3-4a15-8cb6-10cdabe2a15f/Untitled.png)
-
 ```java
 @GetMapping("/orders")
     public String orderList(@ModelAttribute("orderSearch")OrderSearch orderSearch, Model model){
@@ -106,8 +102,6 @@
 
 - 상태가 order면 취소버튼 활성화 → js 호출
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/ffd544eb-a3b5-4d33-ada6-befe785ca880/02840ad3-a210-43d7-8d4f-29014e38be7c/Untitled.png)
-
 # **실전! 스프링 부트와 JPA 활용2 - API 개발과 성능 최적화**
 
 # 섹션 0 강좌소개
@@ -147,8 +141,6 @@ public class MemberApiController {
     }
 }
 ```
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/ffd544eb-a3b5-4d33-ada6-befe785ca880/71f76d1f-1fc2-4050-aba7-49a64711645a/Untitled.png)
 
 - 이름 없이 보내면 → 그냥 null 로 들어감
 
