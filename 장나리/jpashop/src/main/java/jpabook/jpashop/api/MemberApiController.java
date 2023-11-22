@@ -7,6 +7,8 @@ import jpabook.jpashop.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +18,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberApiController {
     private final MemberService memberService;
+
+    @DeleteMapping("/api/v1/members/{id}")
+    public ResponseEntity deleteMemberV1(@PathVariable Long id) {
+        try {
+            memberService.deleteMember(id);
+            return ResponseEntity.ok("회원 삭제를 성공적으로 완료했습니다. 회원 ID: " + id);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("삭제할 회원을 찾을 수 없습니다. 회원 ID: " + id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("서버에서 오류가 발생했습니다.");
+        } 
+    }
 
     @GetMapping("/api/v1/members")
     public List<Member> memberV1(){
@@ -28,6 +44,11 @@ public class MemberApiController {
                 .map(m -> new MemberDto(m.getName()))
                 .collect(Collectors.toList());
         return new Result(collect.size(),collect);
+    }
+    @Data
+    @AllArgsConstructor
+    static class DeleteResult<T>{
+        private T data;
     }
 
     @Data
