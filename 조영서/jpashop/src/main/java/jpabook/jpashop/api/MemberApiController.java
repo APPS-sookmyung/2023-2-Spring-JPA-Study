@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,4 +95,12 @@ public class MemberApiController {
     static class MemberDto{
         private String name;
     }
+
+    //회원 삭제 API
+    @DeleteMapping("/api/v3/members/{id}")
+    public ResponseEntity<String> deleteMemberV1(@PathVariable ("id") Long id) {
+        memberService.delete(id);
+        return new ResponseEntity<>("회원이 성공적으로 삭제되었습니다", HttpStatus.OK);
+    }
+
 }
