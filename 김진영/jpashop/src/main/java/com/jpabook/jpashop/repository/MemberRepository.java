@@ -40,4 +40,9 @@ public class MemberRepository {
                 .setParameter("name",name)
                 .getResultList();
     }
+
+    public void deleteById(Long id){
+        Member member=findOne(id);
+        em.remove(member);
+    }
 }

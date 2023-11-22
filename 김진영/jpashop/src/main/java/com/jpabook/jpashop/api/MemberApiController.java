@@ -67,6 +67,18 @@ public class MemberApiController {
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
     }
 
+    @GetMapping("/api/v1/members/{id}")
+    public DeleteMemberResponse deleteMemberV1(@PathVariable("id")Long id){
+        memberService.delete(id);
+        return new DeleteMemberResponse(id,"성공적으로 회원을 삭제했습니다");
+    }
+    @Data
+    @AllArgsConstructor
+    static class DeleteMemberResponse{
+        private Long id;
+        private String msg;
+    }
+
     @Data
     static class UpdateMemberRequest{
         private String name;
