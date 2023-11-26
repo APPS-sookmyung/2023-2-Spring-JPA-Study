@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class MemberRepository {
@@ -34,4 +35,13 @@ public class MemberRepository {
                 .getResultList();
     }
 
+    //회원 삭제 API
+    public void delete(Long id) {
+        Member member = em.find(Member.class, id);
+        if (member != null) {
+            em.remove(member);
+        } else {
+            throw new IllegalArgumentException("해당 ID의 회원이 존재하지 않습니다.");
+        }
+    }
 }
