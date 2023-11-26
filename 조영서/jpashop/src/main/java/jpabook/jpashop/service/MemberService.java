@@ -20,9 +20,9 @@ public class MemberService {
 
     //@Autowired //스프링이 스프링 빈에 등록되어 있는 MemberRepository를 주입 = field injection
     //spring에서는 생성자가 1개만 있는 경우에는 @Autowired 없이도 자동으로 injection 해줌
-//    public MemberService(MemberRepository memberRepository) {
-//        this.memberRepository = memberRepository;
-//    }
+    //public MemberService(MemberRepository memberRepository) {
+        //this.memberRepository = memberRepository;
+    //}
 
     //회원 가입
     @Transactional
@@ -46,5 +46,17 @@ public class MemberService {
     }
     public Member findOne(Long memberId){ //단권 조회
         return memberRepository.findOne(memberId);
+    }
+
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id);
+        member.setName(name);
+    }
+
+    //회원 삭제 API
+    @Transactional
+    public void delete(Long id) {
+        memberRepository.delete(id);
     }
 }
