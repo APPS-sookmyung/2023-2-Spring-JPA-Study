@@ -35,5 +35,22 @@ public class MemberService {
     }
     public Member findOne(Long memberId) {
         return memberRepository.findOne(memberId);
-    } }
+    }
+
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id);
+        member.setName(name);
+    }
+
+    @Transactional
+    public void deleteMember(Long memberId) {
+        Member member = memberRepository.findOne(memberId);
+        if (member == null) {
+            throw new IllegalArgumentException("존재하지 않는 회원입니다. memberId: " + memberId);
+        }
+        memberRepository.delete(member);
+    }
+
+}
 
