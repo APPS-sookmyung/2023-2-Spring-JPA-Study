@@ -30,7 +30,7 @@ public class MemberApiController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("서버에서 오류가 발생했습니다.");
-        } 
+        }
     }
 
     @GetMapping("/api/v1/members")
