@@ -95,6 +95,71 @@
     * 연관관계가 필요 없는 경우에도 데이터를 항상 조회해서 성능 문제 발생 가능
     * 성능 튜닝이 매우 어려워짐 
     * 성능 최적화가 필요한 경우 페치 조인을 사용해라 
+### 간단한 주문 조회 V2: 엔티티를 DTO로 변환
+* dto를 만들어서 dto 생성자로 엔티티에 접근하여 해당 엔티티 정보를 가져오고 이를 dto로 변환 
+    ```java
+        @GetMapping("/api/v2/simple-orders")
+        public List<SimpleOrderDto> ordersV2(){
+            List<Order> orders=orderRepository.findAllByCriteria(new OrderSearch());
+            List<SimpleOrderDto> result=orders.stream()
+                    .map(o ->new SimpleOrderDto(o))
+                    .collect(Collectors.toList());
+            return result; 
+        }
+
+        @Data
+        static class SimpleOrderDto{
+            private Long orderId;
+            private String name;
+            private LocalDateTime orderDate;
+            private OrderStatus orderStatus;
+            private Address address;
+
+            public SimpleOrderDto(Order order){
+                orderId= order.getId();
+                name=order.getMember().getName(); //LAZY 초기화됨 
+                orderDate=order.getOrderDate();
+                orderStatus=order.getStatus();
+                address=order.getDelivery().getAddress(); //LAZY 초기화
+            }
+
+        }
+    ```
+    * map은 바꾸는 거 o를 SimpleOrderDto로 바꿈 
+    * 그리고 collect를 이용하여 list로 반환 
+* 하지만 `N+1 문제` 발생 
+    * v1과 쿼리수 결과는 같으나
+    * 쿼리가 총 1+N+N번 실행됨
+        * order 조회 1번 (결과 주문수가 N개 나옴)
+        * order -> member 지연 로딩 조회 N번
+        * order -> delivery 지연 로딩 조회 N번 
+    * order의 결과가 4개면 최악의 경우 1+4+4번 실행됨 (최악의 경우)
+        * 지연로딩은 영속성 컨텍스트에서 조회하므로 이미 조회된 경우 쿼리를 생략함 
+### 간단한 주문 조회 V3: 엔티티를 DTO로 변환 - 페치 조인 최적화 
+* fetch join을 사용하여 DTO로 변환한다 (fetch join으로 쿼리 1번 호출)
+    ```java
+        @GetMapping("/api/v3/simple-orders")
+        public List<SimpleOrderDto> ordersV3(){
+            List<Order> orders=orderRepository.findAllWithMemberDelivery();
+            List<SimpleOrderDto> result=orders.stream()
+                    .map(o ->new SimpleOrderDto(o))
+                    .collect(toList());
+            return result;
+        }
+    ```
+* OrderRepository에 findAllWithMemberDelivery() 추가 : LAZY를 무시하고 proxy가 아닌 진짜 객체의 값을 가져와서 채움 (fetch join)
+    ```java
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order o"+
+                        " join fetch o.member m"+
+                        " join fetch o.delivery d", Order.class)
+                .getResultList();
+    }
+    ```
+* fetch join은 jpa에만 있는 문법 
+* 엔티티를 fetch join을 사용하여 쿼리 1번에 조회 
+* fetch join으로 order -> member, order-> delivery는 이미 조회된 상태이므로 지연로딩 x
 
 ### 에러 해결
 1. 조회용 샘플 데이터 입력에서 /orders로 주문내역 페이지를 들어갔을 때 
